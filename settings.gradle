@@ -1,8 +1,9 @@
 // settings.gradle (루트)
 rootProject.name = 'air-dnd'
 include 'common'
-include 'access-gateway'
+include 'access_gateway'
 include 'listing'
 include 'booking'
 include 'payment'
 include 'messaging'
+include 'member'
