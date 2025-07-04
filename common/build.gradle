@@ -1,5 +1,6 @@
 plugins {
 	id 'java-library'
+	id 'org.springframework.boot' version '3.5.0'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -22,30 +23,35 @@ repositories {
 	mavenCentral()
 }
 
-ext {
-	set('springCloudVersion', "2025.0.0")
+dependencyManagement {
+	imports {
+		//
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.0.0"
+		mavenBom "org.testcontainers:testcontainers-bom:1.19.8"
+	}
 }
 
 dependencies {
 	// 공통 로직에 필요한 스프링 코어
-	implementation 'org.springframework:spring-context'
-	implementation 'org.springframework:spring-aop'
+	implementation 'org.springframework.boot:spring-boot-starter'
 
 	// OpenFeign (FeignClient 인터페이스)
-	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.3.0'
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
 	// DTO 검증용
-	implementation 'org.springframework.boot:spring-boot-starter-validation:3.5.0'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// lombok
-	compileOnly 'org.projectlombok:lombok:1.18.38'
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-}
 
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
+	// test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// testcontainer
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:mysql'
 }
 
 tasks.named('test') {
