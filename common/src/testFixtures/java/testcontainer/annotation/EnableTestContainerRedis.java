@@ -1,7 +1,7 @@
-package rice_monkey.common.testcontainer.annotation;
+package testcontainer.annotation;
 
 import org.springframework.context.annotation.Import;
-import rice_monkey.common.testcontainer.config.TestcontainersRedisConfig;
+import testcontainer.config.TestcontainersRedisConfig;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
