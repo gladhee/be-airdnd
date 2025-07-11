@@ -1,4 +1,4 @@
-package rice_monkey.common.testcontainer.config;
+package testcontainer.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;

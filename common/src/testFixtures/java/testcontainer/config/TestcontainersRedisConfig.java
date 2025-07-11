@@ -1,4 +1,4 @@
-package rice_monkey.common.testcontainer.config;
+package testcontainer.config;
 
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -21,9 +21,9 @@ public class TestcontainersRedisConfig {
 
     @DynamicPropertySource
     static void redisProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.redis.host", REDIS_CONTAINER::getHost);
-        registry.add("spring.redis.port", () -> REDIS_CONTAINER.getMappedPort(6379).toString());
-        registry.add("spring.redis.password", () -> "");
+        registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
+        registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(6379).toString());
+        registry.add("spring.data.redis.password", () -> "");
         registry.add("spring.redis.ssl", () -> "false");
     }
 
