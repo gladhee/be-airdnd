@@ -8,3 +8,31 @@ oauth:
     client-id: ${GOOGLE_CLIENT_ID}
     client-secret: ${GOOGLE_CLIENT_SECRET}
     redirect-uri: http://localhost:8080/login/oauth2/code/google
+
+spring:
+  application:
+    name: member
+
+  security:
+    oauth2:
+      client:
+        registration:
+          naver:
+            client-name: ${NAVER_CLIENT_NAME}
+            client-id: ${NAVER_CLIENT_ID}
+            client-secret: ${NAVER_CLIENT_SECRET}
+            redirect-uri: ${NAVER_REDIRECT_URI}
+            authorization-grant-type: ${NAVER_AUTHORIZATION_GRANT_TYPE}
+            scope: ${NAVER_SCOPE}
+        provider:
+          naver:
+            authorization-uri: ${NAVER_AUTHORIZATION_URI}
+            token-uri: ${NAVER_TOKEN_URI}
+            user-info-uri: ${NAVER_USER_INFO_URI}
+            user-name-attribute: ${NAVER_USER_NAME_ATTRIBUTE}
+  jwt:
+    secret: ${JWT_SECRET}
+
+image:
+  service:
+    url: ${IMAGE_SERVICE_URL}

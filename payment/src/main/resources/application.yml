@@ -10,11 +10,15 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
 
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+
 toss:
   secret-key: ${TOSS_SECRET_KEY}
-

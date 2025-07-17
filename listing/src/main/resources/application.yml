@@ -1,6 +1,6 @@
 spring:
   application:
-    name: booking
+    name: listing
 
   datasource:
     url: jdbc:mysql://${RDS_HOST}:${RDS_PORT}/${RDS_DB}
@@ -12,16 +12,15 @@ spring:
     hibernate:
       ddl-auto: validate
     properties:
-      hibernate:
-        format_sql: true
+        hibernate:
+          format_sql: true
+          dialect: org.hibernate.dialect.MySQL8Dialect
 
   flyway:
     enabled: true
     baseline-on-migrate: true
     baseline-version: 0
 
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      password: ${REDIS_PASS}
+image:
+    service:
+        url: ${IMAGE_SERVICE_URL}
