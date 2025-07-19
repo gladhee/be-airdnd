@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: image
+
+  datasource:
+    url: jdbc:mysql://${RDS_HOST}:${RDS_PORT}/${RDS_DB}
+    username: ${RDS_USER}
+    password: ${RDS_PASS}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region:
+      static: ${AWS_REGION}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
