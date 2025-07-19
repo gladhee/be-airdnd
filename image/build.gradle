@@ -5,8 +5,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.flywaydb:flyway-mysql'
-	// AWS SDK v2 - S3 업로드 용
-	implementation("software.amazon.awssdk:s3:2.20.100")
+	implementation 'software.amazon.awssdk:s3:2.32.3'
+
 	// 이미지 MIME 타입 처리용
 	implementation 'org.apache.tika:tika-core:2.8.0'
 
