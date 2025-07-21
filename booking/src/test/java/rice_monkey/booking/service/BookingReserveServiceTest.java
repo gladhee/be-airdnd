@@ -8,12 +8,15 @@ import org.redisson.client.RedisBusyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import rice_monkey.booking.dao.BookingRepository;
 import rice_monkey.booking.domain.Booking;
 import rice_monkey.booking.dto.request.BookingReserveRequestDto;
 import rice_monkey.booking.exception.business.booking.AlreadyBookedException;
 import rice_monkey.booking.feign.listing.ListingClient;
 import rice_monkey.booking.feign.listing.dto.ListingDto;
+import testcontainer.config.MySQLTestContainer;
+import testcontainer.config.RedisTestContainer;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,8 +26,9 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Testcontainers
 @SpringBootTest
-class BookingReserveServiceTest {
+class BookingReserveServiceTest implements MySQLTestContainer, RedisTestContainer {
 
     @Autowired
     private BookingReserveService bookingReserveService;
