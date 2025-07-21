@@ -1,20 +1,14 @@
 package testcontainer.config;
 
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
-@TestConfiguration
-public class TestcontainersMySQLConfig {
+public interface MySQLTestContainer {
 
     @Container
-    private static final MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:8.0");
-
-    static {
-        MY_SQL_CONTAINER.start();
-    }
+    MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:8.0");
 
     @DynamicPropertySource
     static void mySQLProperties(DynamicPropertyRegistry registry) {

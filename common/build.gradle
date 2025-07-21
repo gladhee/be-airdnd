@@ -7,9 +7,10 @@ dependencies {
 	api 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	api 'org.springframework.boot:spring-boot-starter-validation'
 
-	testFixturesImplementation 'org.testcontainers:junit-jupiter'
-	testFixturesImplementation 'org.testcontainers:mysql'
-	testFixturesImplementation 'org.testcontainers:testcontainers'
-	testFixturesImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testFixturesImplementation 'com.mysql:mysql-connector-j'
+	testFixturesApi 'org.testcontainers:junit-jupiter'
+
+	testFixturesApi 'org.testcontainers:mysql'
+	testFixturesApi 'org.testcontainers:testcontainers'
+	testFixturesApi 'org.springframework.boot:spring-boot-starter-test'
+	testFixturesApi 'com.mysql:mysql-connector-j'
 }
