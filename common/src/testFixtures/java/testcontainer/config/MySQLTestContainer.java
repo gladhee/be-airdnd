@@ -8,7 +8,8 @@ import org.testcontainers.junit.jupiter.Container;
 public interface MySQLTestContainer {
 
     @Container
-    MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:8.0");
+    MySQLContainer<?> MY_SQL_CONTAINER = new MySQLContainer<>("mysql:8.0")
+            .withReuse(true);
 
     @DynamicPropertySource
     static void mySQLProperties(DynamicPropertyRegistry registry) {
