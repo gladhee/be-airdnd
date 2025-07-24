@@ -35,12 +35,15 @@ public class Listing {
     private Address address;
     private ListingStatus status;
 
+    @Builder.Default
     @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClosedStayDate> closedStayDates = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "listing", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ListingComment> comments = new ArrayList<>();
 
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "stay_tag",
