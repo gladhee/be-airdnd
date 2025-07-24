@@ -5,7 +5,6 @@ on:
     branches: [ "dev" ]
     paths:
       - 'image/**'
-    paths-ignore:
       - 'common/**'
 
 jobs:
