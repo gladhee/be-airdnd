@@ -11,6 +11,15 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
+    env:
+      LISTING_SERVICE_URL: ${{ vars.LISTING_SERVICE_URL }}
+      BOOKING_SERVICE_URL: ${{ vars.BOOKING_SERVICE_URL }}
+      PAYMENT_SERVICE_URL: ${{ vars.PAYMENT_SERVICE_URL }}
+      MEMBER_SERVICE_URL: ${{ vars.MEMBER_SERVICE_URL }}
+      IMAGE_SERVICE_URL: ${{ vars.IMAGE_SERVICE_URL }}
+      MESSAGING_SERVICE_URL: ${{ vars.MESSAGING_SERVICE_URL }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
