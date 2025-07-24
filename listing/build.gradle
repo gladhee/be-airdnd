@@ -19,13 +19,21 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-// ✅ QueryDSL Q파일 생성 위치 설정
-def querydslDir = "src/main/generated"
+// ✅ QueryDSL 설정 수정
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
 
-tasks.withType(JavaCompile).configureEach {
-	options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
+tasks.withType(JavaCompile) {
+    options.annotationProcessorGeneratedSourcesDirectory = querydslDir
 }
 
 sourceSets {
-	main.java.srcDirs += querydslDir
+    main.java.srcDirs += [ querydslDir ]
+}
+
+tasks.withType(JavaCompile) {
+    dependsOn tasks.findByName('clean')
+}
+
+clean {
+    delete querydslDir
 }

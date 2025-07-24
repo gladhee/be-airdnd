@@ -2,7 +2,6 @@ package rice_monkey.listing.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +22,7 @@ public class Tag {
 
     private String description;
 
+    @Builder.Default
     @ManyToMany(mappedBy = "tags")
     private List<Listing> listings = new ArrayList<>();
 }
-

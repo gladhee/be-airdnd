@@ -39,14 +39,16 @@ CREATE TABLE listing_comment
 
 CREATE TABLE stay_tag
 (
-    stay_id BIGINT NOT NULL
+    stay_id BIGINT NOT NULL,
+    tag_id  BIGINT NOT NULL
 );
 
 CREATE TABLE tag
 (
-    id            BIGINT NULL,
+    id            BIGINT AUTO_INCREMENT NOT NULL,
     name          VARCHAR(255) NULL,
-    `description` VARCHAR(255) NULL
+    `description` VARCHAR(255) NULL,
+    CONSTRAINT pk_tag PRIMARY KEY (id)
 );
 
 ALTER TABLE closed_stay_date
@@ -57,3 +59,6 @@ ALTER TABLE listing_comment
 
 ALTER TABLE stay_tag
     ADD CONSTRAINT fk_stay_tag_on_listing FOREIGN KEY (stay_id) REFERENCES listing (id);
+
+ALTER TABLE stay_tag
+    ADD CONSTRAINT fk_stay_tag_on_tag FOREIGN KEY (tag_id) REFERENCES tag (id);
