@@ -36,7 +36,7 @@ jobs:
         run: ./gradlew :image:test
 
       - name: Run image tests and generate JaCoCo report
-        run: ./gradlew clean :image:test:jacocoTestReport --no-daemon
+        run: ./gradlew clean :image:jacocoTestReport --no-daemon
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
