@@ -10,6 +10,22 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+
+    env:
+      IMAGE_SERVICE_URL: ${{ vars.IMAGE_SERVICE_URL }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+      NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+      NAVER_REDIRECT_URI: ${{ secrets.NAVER_REDIRECT_URI }}
+      NAVER_AUTHORIZATION_GRANT_TYPE: ${{ secrets.NAVER_AUTHORIZATION_GRANT_TYPE }}
+      NAVER_SCOPE: ${{ secrets.NAVER_SCOPE }}
+      NAVER_AUTHORIZATION_URI: ${{ secrets.NAVER_AUTHORIZATION_URI }}
+      NAVER_TOKEN_URI: ${{ secrets.NAVER_TOKEN_URI }}
+      NAVER_USER_INFO_URI: ${{ secrets.NAVER_USER_INFO_URI }}
+      NAVER_USER_NAME_ATTRIBUTE: ${{ secrets.NAVER_USER_NAME_ATTRIBUTE }}
+      GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+      GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
