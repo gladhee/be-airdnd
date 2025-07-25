@@ -29,3 +29,4 @@ cloud:
       static: ${AWS_REGION}
     s3:
       bucket: ${AWS_S3_BUCKET}
+      url: ${AWS_S3_URL}
