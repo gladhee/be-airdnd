@@ -1,0 +1,63 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        # 전체 커버리지가 1% 떨어지면 CI 실패
+        threshold: 1%
+        flags:
+          - access_gateway
+          - booking
+          - image
+          - listing
+          - member
+          - messaging
+          - payment
+    patch:
+      default:
+        # 변경된 파일에 대한 커버리지가 70% 미만이면 CI 실패
+        target: 70%
+        flags:
+          - access_gateway
+          - booking
+          - image
+          - listing
+          - member
+          - messaging
+          - payment
+
+# PR 코멘트 설정
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default # 변경사항이 있을 때마다 코멘트 업데이트
+  require_changes: false # 커버리지 변경이 없어도 코멘트 작성
+
+ignore:
+  - "**/generated/**"
+  - "**/dto/**"
+  - "**/config/**"
+  - "**/*Application.java"
+  - "**/entity/**"
+
+flags:
+  access_gateway:
+    paths:
+      - access_gateway/
+  booking:
+    paths:
+      - booking/
+  image:
+    paths:
+      - image/
+  listing:
+    paths:
+      - listing/
+  member:
+    paths:
+      - member/
+  messaging:
+    paths:
+      - messaging/
+  payment:
+    paths:
+      - payment/
