@@ -28,9 +28,13 @@ coverage:
 
 # PR 코멘트 설정
 comment:
-  layout: "reach, diff, flags, files"
+  layout: "diff, flags, files"
   behavior: default # 변경사항이 있을 때마다 코멘트 업데이트
   require_changes: false # 커버리지 변경이 없어도 코멘트 작성
+  require_base: false # 기본 브랜치와 비교하지 않음
+  hide_project_coverage: false # 프로젝트 커버리지 표시
+  require_head: true # 변경된 브랜치에 대한 커버리지 표시
+
 
 ignore:
   - "**/generated/**"
