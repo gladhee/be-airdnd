@@ -9,8 +9,6 @@ import java.time.ZoneOffset;
 import java.util.TimeZone;
 
 @SpringBootApplication
-@EnableFeignClients
-@EnableJpaAuditing
 public class BookingApplication {
 
     public static void main(String[] args) {
