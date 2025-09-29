@@ -1,10 +1,8 @@
 package rice_monkey.booking.api;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import rice_monkey.booking.service.BookingService;
 
 @RestController
@@ -15,7 +13,8 @@ class BookingInternalController {
     private final BookingService bookingService;
 
     @PatchMapping("/{id}/confirm")
-    public void confirm(@PathVariable Long id) throws Exception {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void confirm(@PathVariable Long id) {
         bookingService.confirm(id);
     }
 

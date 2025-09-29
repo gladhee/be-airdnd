@@ -6,6 +6,9 @@ import org.redisson.client.RedisBusyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import rice_monkey.booking.common.advice.dto.ProblemDetail;
@@ -16,87 +19,108 @@ import rice_monkey.booking.exception.infra.InfrastructureException;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    /** 비즈니스 예외 */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ProblemDetail> handleBusiness(BusinessException ex, HttpServletRequest req) {
-        String requestId = req.getHeader("X-User-Id");
-        log.error("ERROR [{}] RequestID={} User={} URI={}", ex.getErrorCode(), requestId, req.getUserPrincipal(), req.getRequestURI(), ex);
+        log.warn("BUSINESS ERROR [{}] URI={} user={} ", ex.getErrorCode(),
+                req.getRequestURI(), req.getHeader("X-User-Id"), ex);
 
-        ProblemDetail body = new ProblemDetail(
-                // 오류 Url 임시
+        return problemResponse(
+                ex.getHttpStatus(),
                 "https://api.booking.com/errors/" + ex.getErrorCode(),
-                ex.getMessage(),
-                ex.getHttpStatus().value(),
                 ex.getMessage(),
                 req.getRequestURI(),
                 ex.getErrorCode()
         );
-        return ResponseEntity
-                .status(ex.getHttpStatus())
-                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .body(body);
     }
 
+    /** 인프라 예외 */
     @ExceptionHandler(InfrastructureException.class)
     public ResponseEntity<ProblemDetail> handleInfrastructure(InfrastructureException ex, HttpServletRequest req) {
-        String requestId = req.getHeader("X-Request-ID");
-        log.error("INFRA ERROR [{}] RequestID={} User={} URI={}", ex.getErrorCode(), requestId, req.getUserPrincipal(), req.getRequestURI(), ex);
+        log.error("INFRA ERROR [{}] URI={} user={}", ex.getErrorCode(),
+                req.getRequestURI(), req.getHeader("X-User-Id"), ex);
 
-        ProblemDetail body = new ProblemDetail(
+        return problemResponse(
+                ex.getHttpStatus(),
                 "https://api.booking.com/errors/" + ex.getErrorCode(),
-                "내부 시스템 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",  // 사용자에게는 친절한 메시지
-                ex.getHttpStatus().value(),
-                ex.getMessage(),
+                "내부 시스템 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
                 req.getRequestURI(),
                 ex.getErrorCode()
         );
-        return ResponseEntity
-                .status(ex.getHttpStatus())
-                .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .body(body);
     }
 
+    /** Redis Busy */
     @ExceptionHandler(RedisBusyException.class)
-    public ResponseEntity<ProblemDetail> handleRedisBusy(RedisBusyException ex,
-                                                         HttpServletRequest req) {
-        String requestId = req.getHeader("X-Request-ID");
-        log.warn("LOCK BUSY [{}] RequestID={} User={} URI={}",
-                "BOOKING_LOCK_BUSY", requestId,
-                req.getUserPrincipal(), req.getRequestURI(), ex);
+    public ResponseEntity<ProblemDetail> handleRedisBusy(RedisBusyException ex, HttpServletRequest req) {
+        log.warn("LOCK BUSY [{}] URI={} user={}", "BOOKING_LOCK_BUSY",
+                req.getRequestURI(), req.getHeader("X-User-Id"), ex);
 
-        ProblemDetail body = new ProblemDetail(
-                "https://api.booking.com/errors/BOOKING_LOCK_BUSY",
-                "현재 다른 예약 처리 중입니다. 잠시 후 다시 시도해 주세요.",
-                HttpStatus.TOO_MANY_REQUESTS.value(),
-                ex.getMessage(),
-                req.getRequestURI(),
-                "BOOKING_LOCK_BUSY"
-        );
-
-        return ResponseEntity
-                .status(HttpStatus.TOO_MANY_REQUESTS)
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                // Retry-After 헤더로 프론트가 자동 재시도하게 할 수도 있습니다
                 .header("Retry-After", "2")
-                .body(body);
+                .body(new ProblemDetail(
+                        "https://api.booking.com/errors/BOOKING_LOCK_BUSY",
+                        "현재 다른 예약 처리 중입니다. 잠시 후 다시 시도해 주세요.",
+                        HttpStatus.TOO_MANY_REQUESTS.value(),
+                        ex.getMessage(),
+                        req.getRequestURI(),
+                        "BOOKING_LOCK_BUSY"
+                ));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ProblemDetail> handleGeneralException(Exception ex, HttpServletRequest req) {
-        String requestId = req.getHeader("X-Request-ID");
-        log.error("GENERAL ERROR RequestID={} User={} URI={}", requestId, req.getUserPrincipal(), req.getRequestURI(), ex);
+    /** Validation 오류 (DTO @Valid 실패) */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ProblemDetail> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
+        String detail = ex.getBindingResult().getFieldErrors().stream()
+                .map(err -> err.getField() + ": " + err.getDefaultMessage())
+                .findFirst().orElse("Validation failed");
 
-        ProblemDetail body = new ProblemDetail(
+        log.debug("VALIDATION ERROR URI={} detail={}", req.getRequestURI(), detail);
+
+        return problemResponse(
+                HttpStatus.BAD_REQUEST,
+                "https://api.booking.com/errors/INVALID_REQUEST",
+                "요청 값이 올바르지 않습니다.",
+                req.getRequestURI(),
+                "INVALID_REQUEST"
+        );
+    }
+
+    /** Binding 오류 (형변환 실패, 예: 헤더에 문자열 넣었는데 Long 매핑 실패) */
+    @ExceptionHandler({BindException.class, HttpMessageNotReadableException.class})
+    public ResponseEntity<ProblemDetail> handleBinding(Exception ex, HttpServletRequest req) {
+        log.debug("BINDING ERROR URI={} msg={}", req.getRequestURI(), ex.getMessage());
+
+        return problemResponse(
+                HttpStatus.BAD_REQUEST,
+                "https://api.booking.com/errors/BAD_REQUEST",
+                "잘못된 요청입니다.",
+                req.getRequestURI(),
+                "BAD_REQUEST"
+        );
+    }
+
+    /** 그 외 모든 예외 */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ProblemDetail> handleGeneral(Exception ex, HttpServletRequest req) {
+        log.error("GENERAL ERROR URI={} user={}", req.getRequestURI(), req.getHeader("X-User-Id"), ex);
+
+        return problemResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 "https://api.booking.com/errors/GENERAL_ERROR",
                 "예기치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.",
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ex.getMessage(),
                 req.getRequestURI(),
                 "GENERAL_ERROR"
         );
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
+    private ResponseEntity<ProblemDetail> problemResponse(
+            HttpStatus status, String type, String title,
+            String instance, String code
+    ) {
+        return ResponseEntity.status(status)
                 .contentType(MediaType.APPLICATION_PROBLEM_JSON)
-                .body(body);
+                .body(new ProblemDetail(type, title, status.value(), title, instance, code));
     }
 
 }

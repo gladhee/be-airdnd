@@ -34,6 +34,31 @@ subprojects {
         }
     }
 
+    sourceSets {
+        integration_test {
+            java.srcDir file('src/integration_test/java')
+            resources.srcDir file('src/integration_test/resources')
+            compileClasspath += sourceSets.main.output + configurations.testRuntimeClasspath
+            runtimeClasspath += output + compileClasspath
+        }
+    }
+
+    configurations {
+        integrationTestImplementation.extendsFrom testImplementation
+        integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+    }
+
+    tasks.register('integration_test', Test) {
+        description = 'Runs integration tests.'
+        group = 'verification'
+        testClassesDirs = sourceSets.integration_test.output.classesDirs
+        classpath = sourceSets.integration_test.runtimeClasspath
+        useJUnitPlatform()
+        shouldRunAfter test
+    }
+
+    check.dependsOn integration_test
+
     dependencyManagement {
         imports {
             mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.0.0"
